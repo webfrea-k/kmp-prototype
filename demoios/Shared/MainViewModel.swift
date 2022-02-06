@@ -8,14 +8,15 @@
 import Foundation
 import shared
 
-
 class MainViewModel: NSObject, ObservableObject {
     
-    @Published var todo: Todo? = nil
+    let commonViewModel = CommonViewModel()
+    @Published var posts: [PostItem]? = nil
     
-    func getTodo() {
-        Networking.shared.getTodo(completionHandler: { todoItem, error in
-            self.todo = todoItem
-        })
+    func getPosts() {
+        commonViewModel.postsState().watch { postItems in
+            self.posts = postItems as? [PostItem]
+        }
+        commonViewModel.getPosts()
     }
 }

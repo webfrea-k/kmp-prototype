@@ -18,6 +18,15 @@ kotlin {
         }
     }
 
+    // iosSimulatorArm64() adds Apple Silicon simulator support
+    iosSimulatorArm64 {
+        binaries.framework {
+            baseName = "shared"
+            xcf.add(this)
+            binaryOptions["memoryModel"] = "experimental"
+        }
+    }
+
     sourceSets {
         val ktorVersion: String by project
         val coroutinesBaseVersion: String by project
@@ -38,15 +47,24 @@ kotlin {
                 implementation("com.soywiz.korlibs.klock:klock:$klockVersion")
             }
         }
+
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
             }
+        }
 
-            val iosMain by getting {
-                dependencies {
-                    implementation("io.ktor:ktor-client-ios:$ktorVersion")
-                }
+        // adds Apple arm64 (device) and x86_64 (simulator) support
+        val iosMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-ios:$ktorVersion")
+            }
+        }
+
+        // adds Apple Silicon simulator support
+        val iosSimulatorArm64Main by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-ios:$ktorVersion")
             }
         }
     }

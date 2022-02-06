@@ -6,21 +6,42 @@
 //
 
 import SwiftUI
+import shared
 
 struct ContentView: View {
+    
     @StateObject var viewModel = MainViewModel()
-
+    
     var body: some View {
-        Text(viewModel.todo?.title ?? "ERROR")
-            .padding()
-            .onAppear {
-                viewModel.getTodo()
-            }
+        Text("Posts on \(UtilsKt.platformName())").font(Font.title)
+        
+        ScrollView(.vertical) {
+            LazyVStack (alignment: .leading) {
+                ForEach(viewModel.posts ?? [], id: \.self) {
+                    Post(item: $0)
+                }
+            }.padding(5)
+        }
+        .onAppear {
+            viewModel.getPosts()
+        }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+struct Post : View {
+    let item: PostItem
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(item.title)
+                .font(Font.headline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(5)
+            Text(item.body)
+                .font(Font.body)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(5)
+            Divider()
+        }
     }
 }
+
