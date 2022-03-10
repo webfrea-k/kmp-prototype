@@ -1,12 +1,12 @@
 package com.example.kmpprototype
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.cache.*
-import io.ktor.client.plugins.compression.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.compression.ContentEncoding
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 object Networking {
@@ -22,13 +22,8 @@ object Networking {
         ContentEncoding { gzip() }
     }
 
-    suspend inline fun <reified T> get(url: String): T? {
-        return try {
-            ktorClient.get(url).body() as? T
-        } catch (ex: Exception) {
-            println(ex.stackTraceToString())
-            return null
-        }
-    }
+    suspend inline fun <reified T> get(url: String): T? = runCatching {
+        ktorClient.get(url).body() as? T
+    }.getOrNull()
 }
 
